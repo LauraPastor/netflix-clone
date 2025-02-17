@@ -1,18 +1,37 @@
 <template>
-  <button class="btn-submit" type="submit">
-    <slot></slot>
+  <button :class="[primary ? 'primary' : '']" type="submit">
+    {{ label }}
   </button>
 </template>
-<style>
+<script setup>
+import { defineProps } from 'vue'
+defineProps({
+  label: {
+    type: String,
+    default: 'Submit',
+  },
+  primary: {
+    type: Boolean,
+    default: true,
+  },
+})
+</script>
+<style lang="css" scoped>
 button {
-  padding: 16px 24px;
-  margin-bottom: 16px;
-  display: block;
-  border-radius: 9px;
   border: none;
+  background: none;
+  border-radius: 9px;
   width: 100%;
+  cursor: pointer;
   font-size: 16px;
-  color: white;
-  background-color: var(--primary-color);
+  padding: 12px 24px;
+  transition: background-color 0.3s;
+}
+.primary {
+  background-color: var(--primary);
+  color: var(--on-primary);
+}
+.primary:hover {
+  background-color: var(--primary-dark);
 }
 </style>
