@@ -1,5 +1,5 @@
 <template>
-  <button :class="[primary ? 'primary' : '']" type="submit">
+  <button :class="[primary ? 'primary' : '']">
     {{ label }}
   </button>
 </template>
