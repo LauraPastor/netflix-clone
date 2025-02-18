@@ -17,6 +17,14 @@ const login = async (inputData) => {
   return { token, user }
 }
 
-const authApi = { signup, login }
+const getMe = async () => {
+  const response = await apiConfig.get('/users/me')
+  const {
+    data: { user },
+  } = response.data
+  return user
+}
+
+const authApi = { signup, login, getMe }
 
 export default authApi

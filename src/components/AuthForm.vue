@@ -18,7 +18,11 @@ import { ref } from 'vue'
 import InputForm from './InputForm.vue'
 import ButtonSubmit from './ButtonSubmit.vue'
 import authApi from '@/api/auth'
+import { useUserStore } from '@/stores/user'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
+const userStore = useUserStore()
 const isLogged = ref(true)
 
 const firstName = ref('')
@@ -31,18 +35,25 @@ const isSubmitting = ref(false)
 const submit = async () => {
   try {
     isSubmitting.value = true
-    if (isLogged.value) {
-      const { token } = await authApi.login({ email: email.value, password: password.value })
-      localStorage.setItem('token', token)
-    } else {
-      const { token } = await authApi.signup({
-        firstName: firstName.value,
-        lastName: lastName.value,
-        email: email.value,
-        password: password.value,
-      })
-      localStorage.setItem('token', token)
-    }
+
+    const payload = isLogged.value
+      ? { email: email.value, password: password.value }
+      : {
+          firstName: firstName.value,
+          lastName: lastName.value,
+          email: email.value,
+          password: password.value,
+        }
+
+    const { token, user } = isLogged.value
+      ? await authApi.login(payload)
+      : await authApi.signup(payload)
+
+    localStorage.setItem('token', token)
+    userStore.currentUser = user
+    router.push({
+      name: 'home',
+    })
     return
   } catch (error) {
     console.error(error)
