@@ -18,7 +18,6 @@ import { ref } from 'vue'
 import InputForm from './InputForm.vue'
 import ButtonSubmit from './ButtonSubmit.vue'
 import authApi from '@/api/auth'
-import { response } from '../../backend/app'
 
 const isLogged = ref(true)
 
@@ -33,17 +32,17 @@ const submit = async () => {
   try {
     isSubmitting.value = true
     if (isLogged.value) {
-      await authApi.login({ email: email.value, password: password.value })
-      localStorage.setItem('token', response.token)
+      const { token } = await authApi.login({ email: email.value, password: password.value })
+      localStorage.setItem('token', token)
     } else {
-      await authApi.signup({
+      const { token } = await authApi.signup({
         firstName: firstName.value,
         lastName: lastName.value,
         email: email.value,
         password: password.value,
       })
+      localStorage.setItem('token', token)
     }
-    localStorage.setItem('token', response.token)
     return
   } catch (error) {
     console.error(error)
