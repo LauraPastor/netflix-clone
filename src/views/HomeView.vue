@@ -8,11 +8,17 @@
     3. Add a filter with genres
     4. Add a search bar
     5. Display the movies in a grid
-    6. Fix bug: Dragon Ball image doesn't work-->
-    <div v-for="movie in movies" :key="movie.id" class="movie-description">
+    6. Fix bug: Dragon Ball image doesn't work
+    7. README must content the link to download the backend and the npm build npm start-->
+    <div v-for="movie in movies" :key="movie.id">
       <div v-if="selectedMovie?.id === movie.id" class="movie-overlay">
-        <h3>{{ movie.title }}</h3>
-        <p>{{ movie.description }}</p>
+        <div class="overlay-content">
+          <h3>{{ movie.title }}</h3>
+          <p>{{ movie.description }}</p>
+        </div>
+        <div class="overlay-picture">
+          <img :src="movie.thumbnailUrl" :alt="movie.title" class="movie-thumbnail" />
+        </div>
       </div>
     </div>
     <p>Popular movies</p>
@@ -77,26 +83,34 @@ const selectMovie = (movie) => {
 }
 
 .movie-overlay {
-  /* position: absolute; */
-  bottom: 0;
-  left: 0;
-  right: 0;
   background: rgba(0, 0, 0, 0.8);
-  color: white;
-  padding: 130px;
-  text-align: left;
-  border-radius: 0 0 8px 8px;
+  display: flex;
+  flex: row;
+  width: 100%;
 }
-.movie-description {
-  position: relative;
+.overlay-content {
+  text-align: left;
+  padding: 60px 0 0 60px;
+  width: 50%;
+}
+.overlay-picture {
+  width: 50%;
+}
+.movie-overlay img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 .movie-overlay h3 {
   margin: 0;
-  font-size: 25px;
+  font-size: 60px;
+  width: 50%;
+  padding-bottom: 70px;
 }
 
 .movie-overlay p {
   margin: 5px 0 0;
   font-size: 20px;
+  margin-right: 25px;
 }
 </style>
