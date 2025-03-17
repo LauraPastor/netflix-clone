@@ -1,6 +1,9 @@
 <template>
   <main class="page">
-    <nav class="py-sm px-md">
+    <nav
+      class="py-sm px-md"
+      style="display: flex; justify-content: space-between; align-items: center"
+    >
       <img
         src="@/assets/img/logo.png"
         alt="logo"
@@ -8,28 +11,6 @@
         @click="resetSelection"
         style="cursor: pointer"
       />
-    </nav>
-    <!-- TODOS
-    1. Display the movies besides description
-    2. Fix bug: Dragon Ball image doesn't work and size are not the same
-    3. README must content the link to download the backend and the npm build npm start-->
-    <div v-for="movie in movies" :key="movie.id">
-      <div v-if="selectedMovie?.id === movie.id" class="movie-overlay">
-        <div class="overlay-content">
-          <h3>{{ movie.title }}</h3>
-          <h1>{{ formatDuration(movie.durationInMin) }} - {{ getGenreName(movie.categoryId) }}</h1>
-          <p>{{ movie.description }}</p>
-        </div>
-        <div class="overlay-picture">
-          <img :src="movie.thumbnailUrl" :alt="movie.title" class="movie-thumbnail" />
-        </div>
-      </div>
-    </div>
-    <div
-      class="header-container"
-      style="display: flex; align-items: center; justify-content: space-between; margin: 20px"
-    >
-      <h1>Popular movies</h1>
       <div class="search-container" style="position: relative">
         <input
           type="text"
@@ -87,8 +68,26 @@
           </div>
         </div>
       </div>
+    </nav>
+    <!-- TODOS
+    1. Display the movies besides description
+    2. Fix bug: Dragon Ball image doesn't work and size are not the same
+    3. Add icon for search and play button
+    4. README must content the link to download the backend and the npm build npm start-->
+    <div v-for="movie in movies" :key="movie.id">
+      <div v-if="selectedMovie?.id === movie.id" class="movie-overlay">
+        <div class="overlay-content">
+          <h3>{{ movie.title }}</h3>
+          <h1>{{ formatDuration(movie.durationInMin) }} - {{ getGenreName(movie.categoryId) }}</h1>
+          <p>{{ movie.description }}</p>
+          <button>Play</button>
+        </div>
+        <div class="overlay-picture">
+          <img :src="movie.thumbnailUrl" :alt="movie.title" class="movie-thumbnail" />
+        </div>
+      </div>
     </div>
-
+    <h1 style="margin: 20px">Popular movies</h1>
     <!-- Show either the filtered movies or all movies -->
     <div class="movies-container">
       <div
