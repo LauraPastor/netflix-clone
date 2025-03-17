@@ -10,10 +10,9 @@
       />
     </nav>
     <!-- TODOS
-    1. Add a search bar
-    2. Display the movies besides description
-    3. Fix bug: Dragon Ball image doesn't work
-    4. README must content the link to download the backend and the npm build npm start-->
+    1. Display the movies besides description
+    2. Fix bug: Dragon Ball image doesn't work and size are not the same
+    3. README must content the link to download the backend and the npm build npm start-->
     <div v-for="movie in movies" :key="movie.id">
       <div v-if="selectedMovie?.id === movie.id" class="movie-overlay">
         <div class="overlay-content">
@@ -26,9 +25,78 @@
         </div>
       </div>
     </div>
-    <h1>Popular movies</h1>
+    <div
+      class="header-container"
+      style="display: flex; align-items: center; justify-content: space-between; margin: 20px"
+    >
+      <h1>Popular movies</h1>
+      <div class="search-container" style="position: relative">
+        <input
+          type="text"
+          v-model="searchQuery"
+          placeholder="Search movies..."
+          @focus="isSearchFocused = true"
+          @blur="setTimeout(() => (isSearchFocused = false), 200)"
+          style="padding: 8px 12px; border-radius: 20px; border: 1px solid #ccc; width: 200px"
+        />
+
+        <!-- Search Results Dropdown -->
+        <div
+          v-if="isSearchFocused && searchQuery"
+          style="
+            position: absolute;
+            top: 100%;
+            right: 0;
+            width: 250px;
+            max-height: 300px;
+            overflow-y: auto;
+            background: white;
+            border: 1px solid #eee;
+            border-radius: 4px;
+            z-index: 100;
+            margin-top: 5px;
+          "
+        >
+          <div
+            v-for="movie in filteredMovies"
+            :key="movie.id"
+            @mousedown="selectMovie(movie)"
+            style="
+              padding: 10px;
+              cursor: pointer;
+              display: flex;
+              align-items: center;
+              border-bottom: 1px solid #eee;
+            "
+          >
+            <img
+              :src="movie.thumbnailUrl"
+              :alt="movie.title"
+              style="
+                width: 40px;
+                height: 40px;
+                object-fit: cover;
+                margin-right: 10px;
+                border-radius: 3px;
+              "
+            />
+            <div>{{ movie.title }}</div>
+          </div>
+          <div v-if="filteredMovies.length === 0" style="padding: 10px; color: #999">
+            No movies found
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Show either the filtered movies or all movies -->
     <div class="movies-container">
-      <div v-for="movie in movies" :key="movie.id" class="movie-card" @click="selectMovie(movie)">
+      <div
+        v-for="movie in filteredMovies"
+        :key="movie.id"
+        class="movie-card"
+        @click="selectMovie(movie)"
+      >
         <img :src="movie.thumbnailUrl" :alt="movie.title" class="movie-thumbnail" />
       </div>
     </div>
@@ -36,11 +104,13 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import moviesData from '@/../backend/db/data/movies.json'
 
 const movies = ref([])
 const selectedMovie = ref(null)
+const searchQuery = ref('')
+const isSearchFocused = ref(false)
 const genreMapping = {
   1: 'Anime',
   2: 'Action',
@@ -58,13 +128,22 @@ const formatDuration = (minutes) => {
     return `${hours}h ${mins}m`
   }
 }
+const filteredMovies = computed(() => {
+  if (!searchQuery.value.trim()) return movies.value
+
+  const query = searchQuery.value.toLowerCase()
+  return movies.value.filter((movie) => movie.title.toLowerCase().includes(query))
+})
 
 onMounted(() => {
   movies.value = moviesData
 })
 const selectMovie = (movie) => {
   selectedMovie.value = selectedMovie.value?.id === movie.id ? null : movie
+  searchQuery.value = '' // Clear search after selection
+  isSearchFocused.value = false // Hide dropdown
 }
+
 const resetSelection = () => {
   selectedMovie.value = null
 }
