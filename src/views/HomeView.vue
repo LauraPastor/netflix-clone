@@ -1,19 +1,24 @@
 <template>
   <main class="page">
     <nav class="py-sm px-md">
-      <img src="@/assets/img/logo.png" alt="logo" class="nav__logo" />
+      <img
+        src="@/assets/img/logo.png"
+        alt="logo"
+        class="nav__logo"
+        @click="resetSelection"
+        style="cursor: pointer"
+      />
     </nav>
-    <!-- TODOS 1. when click logo the description dissapear
-    2. Description should look like screenshot
-    3. Add a filter with genres
-    4. Add a search bar
-    5. Display the movies in a grid
-    6. Fix bug: Dragon Ball image doesn't work
-    7. README must content the link to download the backend and the npm build npm start-->
+    <!-- TODOS
+    1. Add a search bar
+    2. Display the movies besides description
+    3. Fix bug: Dragon Ball image doesn't work
+    4. README must content the link to download the backend and the npm build npm start-->
     <div v-for="movie in movies" :key="movie.id">
       <div v-if="selectedMovie?.id === movie.id" class="movie-overlay">
         <div class="overlay-content">
           <h3>{{ movie.title }}</h3>
+          <h1>{{ formatDuration(movie.durationInMin) }} - {{ getGenreName(movie.categoryId) }}</h1>
           <p>{{ movie.description }}</p>
         </div>
         <div class="overlay-picture">
@@ -21,7 +26,7 @@
         </div>
       </div>
     </div>
-    <p>Popular movies</p>
+    <h1>Popular movies</h1>
     <div class="movies-container">
       <div v-for="movie in movies" :key="movie.id" class="movie-card" @click="selectMovie(movie)">
         <img :src="movie.thumbnailUrl" :alt="movie.title" class="movie-thumbnail" />
@@ -32,16 +37,39 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import moviesData from '@/../backend/db/data/movies.json' // Adjust path if needed
+import moviesData from '@/../backend/db/data/movies.json'
 
 const movies = ref([])
 const selectedMovie = ref(null)
+const genreMapping = {
+  1: 'Anime',
+  2: 'Action',
+  3: 'Thriller',
+}
+const formatDuration = (minutes) => {
+  const hours = Math.floor(minutes / 60)
+  const mins = minutes % 60
+
+  if (hours === 0) {
+    return `${mins}m`
+  } else if (mins === 0) {
+    return `${hours}h`
+  } else {
+    return `${hours}h ${mins}m`
+  }
+}
 
 onMounted(() => {
   movies.value = moviesData
 })
 const selectMovie = (movie) => {
   selectedMovie.value = selectedMovie.value?.id === movie.id ? null : movie
+}
+const resetSelection = () => {
+  selectedMovie.value = null
+}
+const getGenreName = (categoryId) => {
+  return genreMapping[categoryId] || 'Unknown'
 }
 </script>
 
@@ -105,7 +133,12 @@ const selectMovie = (movie) => {
   margin: 0;
   font-size: 60px;
   width: 50%;
-  padding-bottom: 70px;
+  padding-bottom: 10px;
+}
+.movie-overlay h1 {
+  margin: 0;
+  font-size: 30px;
+  padding-bottom: 60px;
 }
 
 .movie-overlay p {
