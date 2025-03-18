@@ -93,8 +93,7 @@
       </div>
     </nav>
     <!-- TODOS
-    1. Fix bug: Dragon Ball image doesn't work and size are not the same
-    2. README must content the link to download the backend and the npm build npm start-->
+    README must content the link to download the backend and the npm build npm start-->
     <div v-for="movie in movies" :key="movie.id">
       <div v-if="selectedMovie?.id === movie.id" class="movie-overlay">
         <div class="overlay-content">
@@ -229,6 +228,8 @@ const playVideo = () => {
 
 .movie-thumbnail {
   width: 100%;
+  height: 100%;
+  object-fit: cover;
   border-radius: 8px;
   transition: transform 0.3s ease;
 }
