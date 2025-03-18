@@ -11,14 +11,37 @@
         @click="resetSelection"
         style="cursor: pointer"
       />
-      <div class="search-container" style="position: relative">
+      <div class="search-container" style="position: relative; display: flex; align-items: center">
+        <div style="position: absolute; left: 10px; pointer-events: none">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            style="color: #666"
+          >
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+        </div>
         <input
           type="text"
           v-model="searchQuery"
           placeholder="Search movies..."
           @focus="isSearchFocused = true"
           @blur="setTimeout(() => (isSearchFocused = false), 200)"
-          style="padding: 8px 12px; border-radius: 20px; border: 1px solid #ccc; width: 200px"
+          style="
+            padding: 8px 12px 8px 35px;
+            border-radius: 20px;
+            border: 1px solid #ccc;
+            width: 200px;
+            outline: none;
+          "
         />
 
         <!-- Search Results Dropdown -->
@@ -61,7 +84,7 @@
                 border-radius: 3px;
               "
             />
-            <div>{{ movie.title }}</div>
+            <div style="color: #666">{{ movie.title }}</div>
           </div>
           <div v-if="filteredMovies.length === 0" style="padding: 10px; color: #999">
             No movies found
@@ -72,8 +95,7 @@
     <!-- TODOS
     1. Display the movies besides description
     2. Fix bug: Dragon Ball image doesn't work and size are not the same
-    3. Add icon for search and play button
-    4. README must content the link to download the backend and the npm build npm start-->
+    3. README must content the link to download the backend and the npm build npm start-->
     <div v-for="movie in movies" :key="movie.id">
       <div v-if="selectedMovie?.id === movie.id" class="movie-overlay">
         <div class="overlay-content">
