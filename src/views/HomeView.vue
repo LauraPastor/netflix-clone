@@ -93,19 +93,39 @@
       </div>
     </nav>
     <!-- TODOS
-    1. Display the movies besides description
-    2. Fix bug: Dragon Ball image doesn't work and size are not the same
-    3. README must content the link to download the backend and the npm build npm start-->
+    1. Fix bug: Dragon Ball image doesn't work and size are not the same
+    2. README must content the link to download the backend and the npm build npm start-->
     <div v-for="movie in movies" :key="movie.id">
       <div v-if="selectedMovie?.id === movie.id" class="movie-overlay">
         <div class="overlay-content">
           <h3>{{ movie.title }}</h3>
           <h1>{{ formatDuration(movie.durationInMin) }} - {{ getGenreName(movie.categoryId) }}</h1>
           <p>{{ movie.description }}</p>
-          <button>Play</button>
+          <button class="play-button" @click="playVideo" v-if="!isPlaying">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              style="margin-right: 3px"
+            >
+              <polygon points="5,3 19,12 5,21" />
+            </svg>
+            Play
+          </button>
         </div>
         <div class="overlay-picture">
-          <img :src="movie.thumbnailUrl" :alt="movie.title" class="movie-thumbnail" />
+          <div v-if="isPlaying" class="video-container">
+            <video
+              id="movie-player"
+              :src="selectedMovie.videoUrl"
+              controls
+              autoplay
+              class="video-player"
+            ></video>
+          </div>
+          <img v-else :src="movie.thumbnailUrl" :alt="movie.title" class="movie-thumbnail" />
         </div>
       </div>
     </div>
@@ -132,10 +152,14 @@ const movies = ref([])
 const selectedMovie = ref(null)
 const searchQuery = ref('')
 const isSearchFocused = ref(false)
+const isPlaying = ref(false)
 const genreMapping = {
   1: 'Anime',
   2: 'Action',
   3: 'Thriller',
+}
+const getGenreName = (categoryId) => {
+  return genreMapping[categoryId] || 'Unknown'
 }
 const formatDuration = (minutes) => {
   const hours = Math.floor(minutes / 60)
@@ -163,13 +187,16 @@ const selectMovie = (movie) => {
   selectedMovie.value = selectedMovie.value?.id === movie.id ? null : movie
   searchQuery.value = '' // Clear search after selection
   isSearchFocused.value = false // Hide dropdown
+  isPlaying.value = false
 }
 
 const resetSelection = () => {
   selectedMovie.value = null
+  isPlaying.value = false
 }
-const getGenreName = (categoryId) => {
-  return genreMapping[categoryId] || 'Unknown'
+
+const playVideo = () => {
+  isPlaying.value = true
 }
 </script>
 
@@ -245,5 +272,39 @@ const getGenreName = (categoryId) => {
   margin: 5px 0 0;
   font-size: 20px;
   margin-right: 25px;
+}
+.play-button {
+  display: flex;
+  justify-content: center;
+  background-color: white;
+  color: black;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 18px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 16px;
+  transition: background-color 0.2s;
+}
+
+.play-button:hover {
+  background-color: rgba(255, 255, 255, 0.85);
+}
+
+.play-button svg {
+  display: inline-block;
+  vertical-align: middle;
+}
+.video-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.video-player {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 </style>
